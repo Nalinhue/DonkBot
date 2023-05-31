@@ -1,0 +1,19 @@
+version: '3'
+services:
+  bot:
+    image: YOUR_IMAGE
+    container_name: YOUR_CONTAIER_NAME
+    restart: unless-stopped
+    environment:
+      Prefix: "YOUR_PREFIX"
+      LavaLink_HostName: "YOUR_LAVALINK_HOSTNAME"
+      LavaLink_Port:  "YOUR_LAVALINK_PORT"
+      LavaLink_Password: "YOUR_LAVALINK_PASSWORD"
+      LavaLink_SSL: "False or True"
+      DiscordToken: "YOUR_DISCORD_TOKEN"
+      YoutubeAPI: |
+        YOUR_YOUTUBEAPI_1,
+        YOUR_YOUTUBEAPI_2,
+        YOUR_YOUTUBEAPI_3
+        # You can put as many youtube apis in here just make sure to put , at the end of all but the last one
+        # One works fine
