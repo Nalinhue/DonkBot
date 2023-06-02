@@ -115,14 +115,13 @@ namespace DonkBot
         {
             if (e.User == sender.CurrentUser)
                 return;
-            var voiceChannel = e.Channel; 
-            if (voiceChannel.Users.Count() == 1 && voiceChannel.Users.First() == sender.CurrentUser)
+            var lava = sender.GetLavalink();
+            var node = lava.ConnectedNodes.Values.First();
+            var conn = node.GetGuildConnection(e.Guild);
+            if (conn == null)
+                return;
+            if (conn.Channel.Users.Count() == 1 && conn.Channel.Users.First() == sender.CurrentUser)
             {
-                var lava = sender.GetLavalink();
-                var node = lava.ConnectedNodes.Values.First();
-                var conn = node.GetGuildConnection(voiceChannel.Guild); 
-                if (conn == null)
-                    return;
                 await conn.DisconnectAsync();
             }
         }
@@ -192,7 +191,7 @@ namespace DonkBot
             relatedVideosRequest.RelatedToVideoId = videoId;
             relatedVideosRequest.Type = "video";
             relatedVideosRequest.VideoCategoryId = "10"; // Music category
-            relatedVideosRequest.MaxResults = 10;
+            relatedVideosRequest.MaxResults = 12;
 
             relatedVideosRequest.QuotaUser = Guid.NewGuid().ToString();
             return await relatedVideosRequest.ExecuteAsync();
@@ -200,7 +199,7 @@ namespace DonkBot
 
         private static List<string> ReadCringeList(string filePath)
         {
-            return new List<string>(File.ReadAllLines(filePath));
+            return new List<string>(File.ReadAllLines(filePath.ToLower()));
         }
 
         private static bool IsVideoRecommended(SearchResult video, YouTubeService youtubeService, List<string> cringelist, List<string> cringepeoplelist)
