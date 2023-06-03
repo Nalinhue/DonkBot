@@ -1,5 +1,6 @@
 # DonkBot The DiscordBot
 Readme and bot are very rough only use if you have basic skills in github and docker.  
+docker image - https://hub.docker.com/repository/docker/nalinhue/donkbot/general  
 -play or -p to play a song based of a title not a link yet.  
 -skip of -s to skip to the next song.  
 -cease or -c to stop playing completely.  
