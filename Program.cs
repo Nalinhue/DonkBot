@@ -27,10 +27,15 @@ namespace DonkBot
         static async Task Main(string[] args) 
         {
             string? DiscordToken = Environment.GetEnvironmentVariable("DiscordToken");
+            if (DiscordToken == null)
+            {
+                Console.WriteLine("Discord Token is null");
+                return;
+            }
             var config = new DiscordConfiguration() 
             {
                 Intents = DiscordIntents.All,
-                Token = DiscordToken!,
+                Token = DiscordToken,
                 TokenType = TokenType.Bot,
                 AutoReconnect = true,
             };
@@ -41,9 +46,13 @@ namespace DonkBot
                 Timeout = TimeSpan.FromMinutes(2)            
             });
             string? Prefix = Environment.GetEnvironmentVariable("Prefix");
+            if (Prefix == null)
+            {
+                Prefix = "-";
+            }
             var commandsConfig = new CommandsNextConfiguration() 
             {
-                StringPrefixes = new string[]{Prefix! },
+                StringPrefixes = new string[]{Prefix },
                 EnableMentionPrefix = true,
                 EnableDms = true,
                 EnableDefaultHelp = false,
@@ -57,7 +66,16 @@ namespace DonkBot
             string? LHOSTNAME = Environment.GetEnvironmentVariable("LavaLink_HostName");
             string? LPORT = Environment.GetEnvironmentVariable("LavaLink_Port");
             string? LPASSWORD = Environment.GetEnvironmentVariable("LavaLink_Password");
+            if (LHOSTNAME == null || LPORT == null || LPASSWORD == null)
+            {
+                Console.WriteLine("Lavalink password, hostname or port is null.");
+                return;
+            }
             string? LSecure = Environment.GetEnvironmentVariable("LavaLink_SSL");
+            if (LSecure == null)
+            {
+                LSecure = "false";
+            }
             var endpoint = new ConnectionEndpoint
             {
                 Hostname = LHOSTNAME!,
@@ -136,7 +154,7 @@ namespace DonkBot
     {
         private static List<string> RecommendedVideoIds = new List<string>();
         private static int keyIndex = 0;
-        private static string[] apiKeys = Environment.GetEnvironmentVariable("YoutubeAPI")!.Split(',');
+        public static string[] apiKeys = Environment.GetEnvironmentVariable("YoutubeAPI")?.Split(',') ?? new string[0];
 
 
         public static async Task<string> Recommendation(Uri trackUri)

@@ -18,7 +18,25 @@ namespace DonkBot.Commands
 
         public async Task<bool> PreCom(CommandContext ctx)
         {
+            string? AllowedChannelName = Environment.GetEnvironmentVariable("AllowedChannelName");
             CommandContexts[ctx.Guild.Id] = ctx;
+            if (AllowedChannelName != null)
+            {
+                if (!ctx.Channel.Name.Contains(AllowedChannelName))
+                {
+                    var embed = new DiscordEmbedBuilder
+                    {
+                        ImageUrl = "https://i.imgflip.com/7mfp69.jpg"
+                    }.Build();
+                    await ctx.Channel.SendMessageAsync(embed: embed);
+                    return false;
+                }
+            }
+            if (ctx.Member!.VoiceState == null!)
+            {
+                await ctx.Channel.SendMessageAsync("getin here");
+                return false;
+            }
             userVC = ctx.Member!.VoiceState.Channel;
             var lavalinkInstance = ctx.Client.GetLavalink();
             node = lavalinkInstance.ConnectedNodes.Values.First();
@@ -37,15 +55,6 @@ namespace DonkBot.Commands
             if (userVC.Type != ChannelType.Voice)
             {
                 await ctx.Channel.SendMessageAsync("I don't even know how it's possible.");
-                return false;
-            }
-            if (!ctx.Channel.Name.Contains("music"))
-            {
-                var embed = new DiscordEmbedBuilder
-                {
-                    ImageUrl = "https://i.imgflip.com/7mfp69.jpg"
-                }.Build();
-                await ctx.Channel.SendMessageAsync(embed: embed);
                 return false;
             }
             if (conn == null)
@@ -189,8 +198,11 @@ namespace DonkBot.Commands
                 };
                 await ctx.Channel.SendMessageAsync(embed: nowPlayingEmbed);
             }
-            conn.PlaybackFinished -= OnPlaybackFinished;
-            conn.PlaybackFinished += OnPlaybackFinished;
+            if (SongRecommender.apiKeys != null)
+            {
+                conn.PlaybackFinished -= OnPlaybackFinished;
+                conn.PlaybackFinished += OnPlaybackFinished;
+            }
         }    
     
         [Command("skip")]

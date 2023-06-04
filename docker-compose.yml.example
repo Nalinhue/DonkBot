@@ -5,15 +5,22 @@ services:
     container_name: YOUR_CONTAIER_NAME
     restart: unless-stopped
     environment:
-      Prefix: "YOUR_PREFIX"
+
+      Prefix: "YOUR_PREFIX" # defaults to "-" if not added
+      AllowedChannelName: "YOUR_ALLOWED_CHANNELNAME" # Only allows commands in a channel that contains this in the name
+                                                     # leave it empty if you dont want this feature, it is case sensitive.
+                                                     # eg "music" will make it so the bot will error if a botcommand is posted out of music_room.
+      DiscordToken: "YOUR_DISCORD_TOKEN"
+
       LavaLink_HostName: "YOUR_LAVALINK_HOSTNAME"
       LavaLink_Port:  "YOUR_LAVALINK_PORT"
       LavaLink_Password: "YOUR_LAVALINK_PASSWORD"
-      LavaLink_SSL: "False or True"
-      DiscordToken: "YOUR_DISCORD_TOKEN"
+      LavaLink_SSL: "Change_me" # set to True if you have added ssl to your lavalink remove if false
+
       YoutubeAPI: |
         YOUR_YOUTUBEAPI_1,
         YOUR_YOUTUBEAPI_2,
         YOUR_YOUTUBEAPI_3
-        # You can put as many youtube apis in here just make sure to put , at the end of all but the last one
-        # One works fine
+        # if you include a youtubeapi it will autoplay after a song finishes
+        # youtube api has a token limit so if you reach it add as many as you need 
+        # 2 should be plenty since the quota resets daily
