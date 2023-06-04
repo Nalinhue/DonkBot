@@ -1,13 +1,13 @@
 version: '3'
 services:
   bot:
-    image: YOUR_IMAGE
-    container_name: YOUR_CONTAIER_NAME
+    image: YourImageName:YourTag
+    container_name: Give_me_a_name
     restart: unless-stopped
     environment:
 
-      Prefix: "YOUR_PREFIX" # defaults to "-" if not added
-      AllowedChannelName: "YOUR_ALLOWED_CHANNELNAME" # Only allows commands in a channel that contains this in the name
+      Prefix: "YOUR_PREFIX" # defaults to "-" if you remove Prefix:
+      AllowedChannelName: "YOUR_ALLOWED_TEXT_CHANNELNAME" # Only allows commands in a channel that contains this in the name
                                                      # leave it empty if you dont want this feature, it is case sensitive.
                                                      # eg "music" will make it so the bot will error if a botcommand is posted out of music_room.
       DiscordToken: "YOUR_DISCORD_TOKEN"
@@ -21,6 +21,6 @@ services:
         YOUR_YOUTUBEAPI_1,
         YOUR_YOUTUBEAPI_2,
         YOUR_YOUTUBEAPI_3
-        # if you include a youtubeapi it will autoplay after a song finishes
-        # youtube api has a token limit so if you reach it add as many as you need 
-        # 2 should be plenty since the quota resets daily
+      # if you include a youtubeapi it will autoplay after a song finishes
+      # youtube api has a token limit so if you reach it add as many as you need 
+      # 2 should be plenty since the quota resets daily

@@ -57,8 +57,6 @@ namespace DonkBot
                 EnableDms = true,
                 EnableDefaultHelp = false,
             };
-
-            var slashCommandsConfig = Client.UseSlashCommands();
             Commands = Client.UseCommandsNext(commandsConfig);
             Commands.RegisterCommands<Fun>();
             Commands.RegisterCommands<MusicCommand>();
