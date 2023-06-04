@@ -1,14 +1,36 @@
 # DonkBot The DiscordBot
-Readme and bot are very rough only use if you have basic skills in github and docker.  
-docker image - https://hub.docker.com/repository/docker/nalinhue/donkbot/general  
--play or -p to play a song based of a title not playlist's yet  
--skip of -s to skip to the next song.  
--cease or -c to stop playing completely.  
--queue of -q to list the queue.  
-The bot will use youtube to autoplay a song based of the title of the last song when playback finishes.  
-## YoutubeAPI and LavaLink
-https://console.cloud.google.com/apis/library/youtube.googleapis.com  
-Sign in, create a project, get a key then enable YouTube Data API v3.  
+DonkBot is a music bot written in C# using the [DSharpPlus](https://github.com/DSharpPlus/DSharpPlus) library.  
+Playing music from youtube using [LavaLink](https://github.com/lavalink-devs/Lavalink) based on the title of the last song played, utilizing 
+[YoutubeAPIV3](https://console.cloud.google.com/apis/library/youtube.googleapis.com).
 
-https://lavalink.darrennathanael.com/ Either use a Lavalink server that someone else has hosted.  
-https://hub.docker.com/r/fredboat/lavalink/ Or host your own.
+## Prerequisites
+[DiscordBot](https://discord.com/developers/applications)  
+[LavaLinkServers](https://lavalink.darrennathanael.com/) (either public or self-hosted using the [LavaLinkImage](https://github.com/lavalink-devs/Lavalink))  
+[YoutubeAPIV3](https://console.cloud.google.com/apis/library/youtube.googleapis.com) - Sign in, create a project, get a key, enable YouTube Data API v3  
+[Docker](https://www.docker.com/) installed
+
+## Installation
+### Use my provided image [nalinhue/donkbot:latest](https://hub.docker.com/repository/docker/nalinhue/donkbot/general)  
+1. Download and edit the [docker-compose.yml](https://github.com/Nalinhue/DonkBot/blob/main/docker-compose.yml) (use nalinhue/donkbot:latest)  
+2. Run the DockerContainer: `docker-compose up`
+
+### Or create your own  
+1. Clone the repo: `git clone https://github.com/Nalinhue/DonkBot.git`  
+2. Create the DockerImage: `docker build --tag YourImageName:YourTag .`  
+3. Edit the [docker-compose.yml](https://github.com/Nalinhue/DonkBot/blob/main/docker-compose.yml) renember to use YourImageName:YourTag  
+4. Run the DockerContainer: `docker-compose up`
+
+## Commands
+- `-help` or `-h`: List commands
+- `-play` or `-p`: Play a song from youtube (doesn't support playlists yet)  
+- `-skip` or `-s`: Skip to the next song, use `-skip "QueueIndex"` to skip a certain track in queue    
+- `-cease` or `-c`: Stop playing completely  
+- `-queue` or `-q`: List the queue
+
+## Fluff
+Very open to questions, input, complaints and contributions
+### Contact
+Nalinhue@gmail.com
+### License
+
+Distributed under the MIT License. See `LICENSE` for more information.
