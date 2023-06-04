@@ -33,4 +33,4 @@ Very open to questions, input, complaints and contributions
 Nalinhue@gmail.com
 ### License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See [LICENSE](https://github.com/Nalinhue/DonkBot/blob/main/LICENSE) for more information.
