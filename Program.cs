@@ -1,6 +1,4 @@
-﻿using System.Web;
-using System.Xml;
-using DSharpPlus;
+﻿using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Interactivity;
 using DSharpPlus.Interactivity.Extensions;
@@ -8,12 +6,8 @@ using DSharpPlus.EventArgs;
 using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
-using DSharpPlus.SlashCommands;
 using DSharpPlus.Lavalink;
 using DSharpPlus.Net;
-using Google.Apis.YouTube.v3;
-using Google.Apis.Services;
-using Google.Apis.YouTube.v3.Data;
 using DonkBot.Commands;
 
 namespace DonkBot 
@@ -123,7 +117,7 @@ namespace DonkBot
             }
             else 
             {
-                await e.Context.Channel.SendMessageAsync(e.Exception.StackTrace);
+                await e.Context.Channel.SendMessageAsync($"{e.Exception.Message} {e.Exception.StackTrace}");
             }
         }
 
@@ -145,95 +139,6 @@ namespace DonkBot
         private static Task OnClientReady(ReadyEventArgs e)
         {
             return Task.CompletedTask;
-        }
-    }
-
-    public class SongRecommender
-    {
-        private static List<string> RecommendedVideoIds = new List<string>();
-        private static int keyIndex = 0;
-        public static string[] apiKeys = Environment.GetEnvironmentVariable("YoutubeAPI")?.Split(',') ?? new string[0];
-
-
-        public static async Task<string> Recommendation(Uri trackUri)
-        {
-            try
-            {
-                var youtubeService = new YouTubeService(new BaseClientService.Initializer()
-                {
-                    ApiKey = apiKeys[keyIndex],
-                });
-                keyIndex = (keyIndex + 1) % apiKeys.Length;
-                var videoId = ExtractVideoId(trackUri);
-                var relatedVideosResponse = await GetRelatedVideos(youtubeService, videoId);
-                var cringelist = ReadCringeList("CringeLists/cringelist.txt");
-                var cringepeoplelist = ReadCringeList("CringeLists/cringepeoplelist.txt");
-                List<SearchResult> eligibleVideos = new List<SearchResult>();
-                foreach (var video in relatedVideosResponse.Items)
-                {
-                    if (IsVideoRecommended(video, youtubeService, cringelist, cringepeoplelist))
-                    {
-                        eligibleVideos.Add(video);
-                    }
-                }
-                if (eligibleVideos.Count == 0)
-                {
-                    Console.WriteLine("Didn't find anything");
-                    return "notFound";
-                }
-                var rand = new Random();
-                var selectedVideo = eligibleVideos[rand.Next(eligibleVideos.Count)];
-                lock (RecommendedVideoIds)
-                {
-                    RecommendedVideoIds.Add(selectedVideo.Id.VideoId);
-                }
-                return selectedVideo.Snippet.Title;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                return "error";
-            }
-        }
-
-        private static string ExtractVideoId(Uri trackUri)
-        {
-            return HttpUtility.ParseQueryString(trackUri.Query).Get("v")!;
-        }
-
-        private static async Task<SearchListResponse> GetRelatedVideos(YouTubeService youtubeService, string videoId)
-        {
-            var relatedVideosRequest = youtubeService.Search.List("snippet");
-            relatedVideosRequest.RelatedToVideoId = videoId;
-            relatedVideosRequest.Type = "video";
-            relatedVideosRequest.VideoCategoryId = "10"; // Music category
-            relatedVideosRequest.MaxResults = 12;
-
-            relatedVideosRequest.QuotaUser = Guid.NewGuid().ToString();
-            return await relatedVideosRequest.ExecuteAsync();
-        }
-
-        private static List<string> ReadCringeList(string filePath)
-        {
-            return new List<string>(File.ReadAllLines(filePath));
-        }
-
-        private static bool IsVideoRecommended(SearchResult video, YouTubeService youtubeService, List<string> cringelist, List<string> cringepeoplelist)
-        {
-            var videoRequest = youtubeService.Videos.List("contentDetails");
-            videoRequest.Id = video.Id.VideoId;
-            videoRequest.QuotaUser = Guid.NewGuid().ToString();
-            var videoResponse = videoRequest.ExecuteAsync().Result;
-
-            var duration = XmlConvert.ToTimeSpan(videoResponse.Items[0].ContentDetails.Duration);
-            var totalMinutes = duration.TotalMinutes;
-            var cringe = !cringelist.Any(title => video.Snippet.Title.ToLower().Contains(title));
-            var cringepeople = !cringepeoplelist.Any(chanel => video.Snippet.ChannelTitle.ToLower().Contains(chanel));
-
-            lock (RecommendedVideoIds)
-            {
-                return totalMinutes > 2 && totalMinutes < 5 && !RecommendedVideoIds.Contains(video.Id.VideoId) && cringe && cringepeople;
-            }
         }
     }
 }
