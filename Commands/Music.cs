@@ -236,7 +236,7 @@ namespace DonkBot.Commands
             Queues[ctx.Guild.Id] = new Queue<LavalinkTrack>(queueList);
         }
     
-        [Command("cease")]
+        [Command("Cease")]
         [Aliases("c", "stop")]
         public async Task StopMusic(CommandContext ctx)
         {
@@ -285,5 +285,12 @@ namespace DonkBot.Commands
                 await ctx.Channel.SendMessageAsync("No queue");
             }
         }
+        [Command("Repeat")]
+        [Aliases("r")]
+        public async Task Repeat(CommandContext ctx, int amounttorepeat = 0)
+        {
+            
+        }
+
     }
 }

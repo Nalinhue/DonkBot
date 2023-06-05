@@ -166,8 +166,8 @@ namespace DonkBot
                 keyIndex = (keyIndex + 1) % apiKeys.Length;
                 var videoId = ExtractVideoId(trackUri);
                 var relatedVideosResponse = await GetRelatedVideos(youtubeService, videoId);
-                var cringelist = ReadCringeList("cringelist.txt");
-                var cringepeoplelist = ReadCringeList("cringepeoplelist.txt");
+                var cringelist = ReadCringeList("CringeLists/cringelist.txt");
+                var cringepeoplelist = ReadCringeList("CringeLists/cringepeoplelist.txt");
                 List<SearchResult> eligibleVideos = new List<SearchResult>();
                 foreach (var video in relatedVideosResponse.Items)
                 {
@@ -215,7 +215,7 @@ namespace DonkBot
 
         private static List<string> ReadCringeList(string filePath)
         {
-            return new List<string>(File.ReadAllLines(filePath.ToLower()));
+            return new List<string>(File.ReadAllLines(filePath));
         }
 
         private static bool IsVideoRecommended(SearchResult video, YouTubeService youtubeService, List<string> cringelist, List<string> cringepeoplelist)
