@@ -1,6 +1,5 @@
 ﻿using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
-using DSharpPlus.Entities;
 
 namespace DonkBot.Commands 
 {
@@ -8,7 +7,7 @@ namespace DonkBot.Commands
     {
         [Command("help")]
         [Aliases("h")]
-        public async Task Help(CommandContext ctx, [Description("The command to provide help for.")] string command = null!)
+        public async Task Help(CommandContext ctx, [Description("The command to provide help for.")] string? command = null!)
         {
             if (string.IsNullOrEmpty(command))
             {
@@ -29,5 +28,24 @@ namespace DonkBot.Commands
                 await ctx.RespondAsync($"No command found with the name '{command}'.");
             }
         }   
+        
+        [Command("Bitrate")]
+        [Aliases("b")]
+        public async Task Bitrate(CommandContext ctx, string? vc = null!)
+        {
+            if (string.IsNullOrEmpty(vc))
+            {
+                if (ctx.Member!.VoiceState.Channel == null!)
+                {
+                    await ctx.Channel.SendMessageAsync("Which voiceChannel");
+                    return;
+                }
+                await ctx.Channel.SendMessageAsync($"{ctx.Member.VoiceState.Channel.Bitrate.ToString()} Bits");
+            }
+            else
+            {
+                await ctx.Channel.SendMessageAsync("TODO - overloads");
+            }
+        }
     }
 }
