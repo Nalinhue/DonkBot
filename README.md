@@ -23,8 +23,8 @@ Playing music from youtube using [LavaLink](https://github.com/lavalink-devs/Lav
 
 ## Commands
 - `-help` or `-h`: List commands.  
-- `-play` or `-p`: Play a song from youtube (doesn't support playlists yet).  
-- `-skip` or `-s`: Skip to the next song, use `-skip "QueueIndex"` to skip a certain track in queue.    
+- `-play` or `-p`: Play a song from youtube. Can be search request, URL or playlist.  
+- `-skip` or `-s`: Skip to the next song, use `-skip "QueueIndex"` to skip a certain track in queue.  
 - `-cease` or `-c`: Stop playing completely.  
 - `-queue` or `-q`: List the queue.  
 - `-repeat` or `-r`: Repeat currently playing song an amount of times if not specified will repeat 100 times.

@@ -48,7 +48,7 @@ namespace DonkBot
             {
                 StringPrefixes = new string[]{Prefix },
                 EnableMentionPrefix = true,
-                EnableDms = true,
+                EnableDms = false,
                 EnableDefaultHelp = false,
             };
             Commands = Client.UseCommandsNext(commandsConfig);
