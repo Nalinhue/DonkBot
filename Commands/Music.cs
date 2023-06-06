@@ -20,44 +20,23 @@ namespace DonkBot.Commands
                 await PlayMusic(ctx, query);
                 return;
             }
-            if (conn.CurrentState.CurrentTrack != null)
+            var searchQuery = await GetLoadResult(query, node!);
+            if (searchQuery.LoadResultType == LavalinkLoadResultType.NoMatches || searchQuery.LoadResultType == LavalinkLoadResultType.LoadFailed)
             {
-                var searchQuery = await node!.Rest.GetTracksAsync(query);
-                if (searchQuery.LoadResultType == LavalinkLoadResultType.NoMatches || searchQuery.LoadResultType == LavalinkLoadResultType.LoadFailed)
-                {
-                    await ctx.Channel.SendMessageAsync($"Failed to find music with query: {query}");
-                    return;
-                }
-
-                var musicTrack = searchQuery.Tracks.First();
-                Queues[ctx.Guild.Id].Enqueue(musicTrack);
-                await ctx.Channel.SendMessageAsync($"Queued: {musicTrack.Title}");
+                await ctx.Channel.SendMessageAsync($"Failed to find music with query: {query}");
                 return;
+            }
+            if (searchQuery.LoadResultType == LavalinkLoadResultType.TrackLoaded || searchQuery.LoadResultType == LavalinkLoadResultType.SearchResult)
+            {
+                await Pusic(ctx, searchQuery.Tracks.First());
             }
             else
             {
-                var searchQuery = await node!.Rest.GetTracksAsync(query);
-                if (searchQuery.LoadResultType == LavalinkLoadResultType.NoMatches || searchQuery.LoadResultType == LavalinkLoadResultType.LoadFailed)
+                foreach (var musicTrack in searchQuery.Tracks)
                 {
-                    await ctx.Channel.SendMessageAsync($"Failed to find music with query: {query}");
-                    return;
+                    await Pusic(ctx, musicTrack, true);
                 }
-
-                var musicTrack = searchQuery.Tracks.First();
-                await conn.PlayAsync(musicTrack);
-                playin = musicTrack;
-                string musicDescription = $"{musicTrack.Title}\n" +
-                                          $"Author: {musicTrack.Author}\n" +
-                                          $"URL: {musicTrack.Uri}\n" +
-                                          $"Length: {musicTrack.Length}";
-
-                var nowPlayingEmbed = new DiscordEmbedBuilder()
-                {
-                    Color = DiscordColor.Yellow,
-                    Title = "Now Playing",
-                    Description = musicDescription
-                };
-                await ctx.Channel.SendMessageAsync(embed: nowPlayingEmbed);
+                await ctx.Channel.SendMessageAsync("Queued playlist");
             }
             conn.PlaybackFinished -= OnPlaybackFinished;
             conn.PlaybackFinished += OnPlaybackFinished;

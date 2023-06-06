@@ -121,15 +121,19 @@ namespace DonkBot.utils
                     var recomd = await SongRecommender.Recommendation(playin!.Uri);
                     if (recomd == "error")
                     {
-                        await ctx.Channel.SendMessageAsync("No youtube tokens left");
+                        await ctx.Channel.SendMessageAsync("Error you probably ran out of tokens");
                         return;
                     }
                     if (recomd == "notFound")
                     {
-                        await ctx.Channel.SendMessageAsync("did not find a single fucking song");
+                        await ctx.Channel.SendMessageAsync("Nothing found :(");
                         return;
                     }
-                    await Pusic(ctx, query: recomd);
+                    string youtubeUrl = $"https://www.youtube.com/watch?v={recomd}";
+                    var node = ctx.Client.GetLavalink().ConnectedNodes.Values.First();
+                    var loadResult = await GetLoadResult(youtubeUrl, node);
+                    var track = loadResult.Tracks.First();
+                    await Pusic(ctx, track);
                 }
                 sender.PlaybackFinished -= OnPlaybackFinished;
                 sender.PlaybackFinished += OnPlaybackFinished;
@@ -140,28 +144,47 @@ namespace DonkBot.utils
             }
         }
 
-        public async Task Pusic(CommandContext ctx, string query) //TODO wht is real
+        public async Task Pusic(CommandContext ctx, LavalinkTrack musicTrack, bool isPlaylist = false)
         {
-            var searchQuery = await node!.Rest.GetTracksAsync(query);
-            if (searchQuery.LoadResultType == LavalinkLoadResultType.NoMatches || searchQuery.LoadResultType == LavalinkLoadResultType.LoadFailed)
-            {
-                await ctx.Channel.SendMessageAsync($"Failed to find music with query: {query}");
-                return;
+            var conn = ctx.Client.GetLavalink().ConnectedNodes.Values.First().GetGuildConnection(ctx.Guild);
+            if (conn!.CurrentState.CurrentTrack != null)
+            { 
+                Queues[ctx.Guild.Id].Enqueue(musicTrack);
+                if (!isPlaylist)
+                {
+                    await ctx.Channel.SendMessageAsync($"Queued: {musicTrack.Title}");
+                }
             }
-            var musicTrack = searchQuery.Tracks.First();
-            await conn!.PlayAsync(musicTrack);
-            playin = musicTrack;
-            string musicDescription = $"{musicTrack.Title}\n" +
-                                      $"Author: {musicTrack.Author}\n" +
-                                      $"URL: {musicTrack.Uri}\n" +
-                                      $"Length: {musicTrack.Length}";
-            var nowPlayingEmbed = new DiscordEmbedBuilder()
+            else
             {
-                Color = DiscordColor.Yellow,
-                Title = "Now Playing",
-                Description = musicDescription
-            };
-            await ctx.Channel.SendMessageAsync(embed: nowPlayingEmbed);
+                await conn.PlayAsync(musicTrack);
+                playin = musicTrack;
+                string musicDescription = $"{musicTrack.Title}\n" +
+                                          $"Author: {musicTrack.Author}\n" +
+                                          $"URL: {musicTrack.Uri}\n" +
+                                          $"Length: {musicTrack.Length}";
+                var nowPlayingEmbed = new DiscordEmbedBuilder()
+                {
+                    Color = DiscordColor.Yellow,
+                    Title = "Now Playing",
+                    Description = musicDescription
+                };
+                await ctx.Channel.SendMessageAsync(embed: nowPlayingEmbed);
+            }
+        }
+
+        public async Task<LavalinkLoadResult> GetLoadResult(string query, LavalinkNodeConnection node)
+        {
+            bool isUrl = Uri.TryCreate(query, UriKind.Absolute, out var uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+            LavalinkLoadResult searchQuery;
+            if (isUrl)
+                searchQuery = await node.Rest.GetTracksAsync(uriResult!);
+            else
+                searchQuery = await node.Rest.GetTracksAsync(query);
+
+            return searchQuery;
         }
     }
 
@@ -206,7 +229,7 @@ namespace DonkBot.utils
                     RecommendedVideoIds.Add(selectedVideo.Id.VideoId);
                 }
                 Console.WriteLine(selectedVideo.Snippet.Title);
-                return selectedVideo.Snippet.Title;
+                return selectedVideo.Id.VideoId;
             }
             catch (Exception ex)
             {
