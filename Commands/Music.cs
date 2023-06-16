@@ -9,7 +9,7 @@ namespace DonkBot.Commands
     public class MusicCommand : BaseMusic
     {
         [Command("play")]
-        [Aliases("p")]
+        [Aliases("p", "🧑‍🎤")]
         public async Task PlayMusic(CommandContext ctx, [RemainingText] string query)
         {
             if (!await PreCom(ctx)) return;
@@ -43,7 +43,7 @@ namespace DonkBot.Commands
         }    
     
         [Command("skip")]
-        [Aliases("s", "garbage", "trash")]
+        [Aliases("s", "garbage", "trash", "😒")]
         public async Task SkipTrack(CommandContext ctx, int trackIndexToSkip = 0)
         {
             if (!await PreCom(ctx)) return;
@@ -74,7 +74,7 @@ namespace DonkBot.Commands
         }
     
         [Command("Cease")]
-        [Aliases("c", "stop")]
+        [Aliases("c", "stop", "🤮")]
         public async Task StopMusic(CommandContext ctx)
         {
             if (!await PreCom(ctx)) return;
@@ -103,7 +103,7 @@ namespace DonkBot.Commands
             await ctx.Channel.SendMessageAsync(embed: stopEmbed);
         }
         [Command("queue")]
-        [Aliases("q")]
+        [Aliases("q", "🤔")]
         public async Task ListQueue(CommandContext ctx)
         {
             if (Queues.ContainsKey(ctx.Guild.Id))
@@ -129,7 +129,7 @@ namespace DonkBot.Commands
         }
 
         [Command("Repeat")]
-        [Aliases("r")]
+        [Aliases("r", "🤪")]
         public async Task Repeat(CommandContext ctx, string? amounttorepeat = null)
         {
             if (!await PreCom(ctx)) return;

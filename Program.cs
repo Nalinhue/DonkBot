@@ -82,11 +82,78 @@ namespace DonkBot
             };
 
             Client.VoiceStateUpdated += OnVoiceStateUpdated;
+            Client.MessageCreated += emojitime;
+            Client.MessageReactionAdded += reactions;
             var lavalink = Client.UseLavalink();
             await Client.ConnectAsync();
             await lavalink.ConnectAsync(lavalinkConfig);
             await Task.Delay(-1);
 
+        }
+
+        static async Task reactions(DiscordClient sender, MessageReactionAddEventArgs e)
+        {
+            var commands = sender.GetCommandsNext();
+            var ctx = commands.CreateContext(e.Message, null!, null);
+            string? UserID = Environment.GetEnvironmentVariable("UserID");
+            if (e.User.IsBot)
+                return;
+            var emoji = e.Emoji;
+            switch (emoji.Name)
+            {
+                case "🐀":
+                    await ctx.Message.DeleteAllReactionsAsync();
+                    Thread.Sleep(400);
+                    await ctx.Message.CreateReactionAsync(DSharpPlus.Entities.DiscordEmoji.FromUnicode("🇧"));
+                    Thread.Sleep(400);
+                    await ctx.Message.CreateReactionAsync(DSharpPlus.Entities.DiscordEmoji.FromUnicode("🇦"));
+                    Thread.Sleep(400);
+                    await ctx.Message.CreateReactionAsync(DSharpPlus.Entities.DiscordEmoji.FromUnicode("🇸"));
+                    Thread.Sleep(400);
+                    await ctx.Message.CreateReactionAsync(DSharpPlus.Entities.DiscordEmoji.FromUnicode("🇪"));
+                    Thread.Sleep(400);
+                    await ctx.Message.CreateReactionAsync(DSharpPlus.Entities.DiscordEmoji.FromUnicode("🇩"));
+                    break;
+
+                case "❌":
+                    if (UserID == null)
+                        return;
+                    if (e.User.Id.ToString() != UserID)
+                        return;
+                    await ctx.Message.DeleteAsync();
+                    break;
+
+                case "🤡":
+                    await ctx.Message.DeleteAllReactionsAsync();
+                    Thread.Sleep(400);
+                    await ctx.Message.CreateReactionAsync(DSharpPlus.Entities.DiscordEmoji.FromUnicode("🇼"));
+                    Thread.Sleep(400);
+                    await ctx.Message.CreateReactionAsync(DSharpPlus.Entities.DiscordEmoji.FromUnicode("🇷"));
+                    Thread.Sleep(400);
+                    await ctx.Message.CreateReactionAsync(DSharpPlus.Entities.DiscordEmoji.FromUnicode("🇴"));
+                    Thread.Sleep(400);
+                    await ctx.Message.CreateReactionAsync(DSharpPlus.Entities.DiscordEmoji.FromUnicode("🇳"));
+                    Thread.Sleep(400);
+                    await ctx.Message.CreateReactionAsync(DSharpPlus.Entities.DiscordEmoji.FromUnicode("🇬"));
+                    Thread.Sleep(400);
+                    await ctx.Message.CreateReactionAsync(DSharpPlus.Entities.DiscordEmoji.FromUnicode("🤡"));
+                    
+                    break;
+            }
+        }
+        static async Task emojitime(DiscordClient sender, MessageCreateEventArgs e)
+        {
+            var commands = sender.GetCommandsNext();
+            var ctx = commands.CreateContext(e.Message, null!, null);
+            if (e.Author.IsBot)
+                return;
+            var emoji = e.Message.Content;
+            switch (emoji)
+            {
+                case "🐀":
+                    await ctx.Channel.SendMessageAsync("good rat.");
+                    break;
+            }
         }
 
         private static async Task OnCommandError(CommandsNextExtension sender, CommandErrorEventArgs e)

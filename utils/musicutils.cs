@@ -211,10 +211,8 @@ namespace DonkBot.utils
                 List<SearchResult> eligibleVideos = new List<SearchResult>();
                 foreach (var video in relatedVideosResponse.Items)
                 {
-                    Console.WriteLine(video.Snippet.Title);
                     if (await IsVideoRecommended(video, youtubeService, cringelist, cringepeoplelist))
                     {
-                        Console.WriteLine("^");
                         eligibleVideos.Add(video);
                     }
                 }
@@ -228,7 +226,6 @@ namespace DonkBot.utils
                 {
                     RecommendedVideoIds.Add(selectedVideo.Id.VideoId);
                 }
-                Console.WriteLine(selectedVideo.Snippet.Title);
                 return selectedVideo.Id.VideoId;
             }
             catch (Exception ex)
