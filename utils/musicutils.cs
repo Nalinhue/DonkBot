@@ -32,7 +32,7 @@ namespace DonkBot.utils
                 {
                     var embed = new DiscordEmbedBuilder
                     {
-                        ImageUrl = "https://i.imgflip.com/7mfp69.jpg"
+                        ImageUrl = "https://steamuserimages-a.akamaihd.net/ugc/2021600978554483660/FA692BD0639B398A4030BEFDDC4B646520DA11E8/"
                     }.Build();
                     await ctx.Channel.SendMessageAsync(embed: embed);
                     return false;
