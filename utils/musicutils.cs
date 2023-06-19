@@ -77,71 +77,69 @@ namespace DonkBot.utils
 
         public async Task OnPlaybackFinished(LavalinkGuildConnection sender, TrackFinishEventArgs e)
         {
-            if (CommandContexts.TryGetValue(e.Player.Guild.Id, out CommandContext? ctx))
+            if (MusicCommand.musicchannel == null)
             {
-                if (repeat > 0)
-                {
-                    await e.Player.PlayAsync(playin!);
-                    repeat--;
-                    string musicDescription = $"{playin!.Title}\n" +
-                                      $"Author: {playin!.Author}\n" +
-                                      $"URL: {playin!.Uri}\n" +
-                                      $"Length: {playin!.Length}";
-                    var nowPlayingEmbed = new DiscordEmbedBuilder()
-                    {
-                        Color = DiscordColor.Yellow,
-                        Title = $"{repeat} more",
-                        Description = musicDescription
-                    };
-                    await ctx.Channel.SendMessageAsync(embed: nowPlayingEmbed);
-                }
-                else if (Queues.ContainsKey(ctx.Guild.Id) && Queues[ctx.Guild.Id].Count > 0)
-                {
-                    var nextTrack = Queues[ctx.Guild.Id].Dequeue();
-                    await e.Player.PlayAsync(nextTrack);
-                    playin = nextTrack;
-                    string nextMusicDescription = $"{nextTrack.Title}\n" +
-                                              $"Author: {nextTrack.Author}\n" +
-                                              $"URL: {nextTrack.Uri}\n" +
-                                              $"Length: {nextTrack.Length}";
-
-                    var nextPlayingEmbed = new DiscordEmbedBuilder()
-                    {
-                        Color = DiscordColor.Yellow,
-                        Title = "Now Playing",
-                        Description = nextMusicDescription
-                    };
-                    await ctx.Channel.SendMessageAsync(embed: nextPlayingEmbed);
-                    return;
-                }
-                else if (SongRecommender.apiKeys == null)
-                    return;
-                else
-                {
-                    var recomd = await SongRecommender.Recommendation(playin!.Uri);
-                    if (recomd == "error")
-                    {
-                        await ctx.Channel.SendMessageAsync("Error you probably ran out of tokens");
-                        return;
-                    }
-                    if (recomd == "notFound")
-                    {
-                        await ctx.Channel.SendMessageAsync("Nothing found :(");
-                        return;
-                    }
-                    string youtubeUrl = $"https://www.youtube.com/watch?v={recomd}";
-                    var node = ctx.Client.GetLavalink().ConnectedNodes.Values.First();
-                    var loadResult = await GetLoadResult(youtubeUrl, node);
-                    var track = loadResult.Tracks.First();
-                    await Pusic(ctx, track);
-                }
-                sender.PlaybackFinished -= OnPlaybackFinished;
-                sender.PlaybackFinished += OnPlaybackFinished;
+                Console.WriteLine("no ctx for playback finnished");
+                return;
             }
+            CommandContext ctx = MusicCommand.musicchannel;
+            if (repeat > 0)
+            {
+                await e.Player.PlayAsync(playin!);
+                repeat--;
+                string musicDescription = $"{playin!.Title}\n" +
+                                  $"Author: {playin!.Author}\n" +
+                                  $"URL: {playin!.Uri}\n" +
+                                  $"Length: {playin!.Length}";
+                var nowPlayingEmbed = new DiscordEmbedBuilder()
+                {
+                    Color = DiscordColor.Yellow,
+                    Title = $"{repeat} more",
+                    Description = musicDescription
+                };
+                await ctx.Channel.SendMessageAsync(embed: nowPlayingEmbed);
+            }
+            else if (Queues.ContainsKey(ctx.Guild.Id) && Queues[ctx.Guild.Id].Count > 0)
+            {
+                var nextTrack = Queues[ctx.Guild.Id].Dequeue();
+                await e.Player.PlayAsync(nextTrack);
+                playin = nextTrack;
+                string nextMusicDescription = $"{nextTrack.Title}\n" +
+                                          $"Author: {nextTrack.Author}\n" +
+                                          $"URL: {nextTrack.Uri}\n" +
+                                          $"Length: {nextTrack.Length}";
+                var nextPlayingEmbed = new DiscordEmbedBuilder()
+                {
+                    Color = DiscordColor.Yellow,
+                    Title = "Now Playing",
+                    Description = nextMusicDescription
+                };
+                await ctx.Channel.SendMessageAsync(embed: nextPlayingEmbed);
+                return;
+            }
+            else if (SongRecommender.apiKeys == null)
+                return;
             else
             {
-                Console.WriteLine("CommandContext not found for guild id: " + e.Player.Guild.Id);
+                var recomd = await SongRecommender.Recommendation(playin!.Uri);
+                if (recomd == "error")
+                {
+                    await ctx.Channel.SendMessageAsync("Error you probably ran out of tokens");
+                    return;
+                }
+                if (recomd == "notFound")
+                {
+                    await ctx.Channel.SendMessageAsync("Nothing found :(");
+                    return;
+                }
+                string youtubeUrl = $"https://www.youtube.com/watch?v={recomd}";
+                var node = ctx.Client.GetLavalink().ConnectedNodes.Values.First();
+                var loadResult = await GetLoadResult(youtubeUrl, node);
+                var track = loadResult.Tracks.First();
+                await Pusic(ctx, track);
             }
+            sender.PlaybackFinished -= OnPlaybackFinished;
+            sender.PlaybackFinished += OnPlaybackFinished;
         }
 
         public async Task Pusic(CommandContext ctx, LavalinkTrack musicTrack, bool isPlaylist = false)

@@ -8,10 +8,12 @@ namespace DonkBot.Commands
 {
     public class MusicCommand : BaseMusic
     {
+        static public CommandContext? musicchannel;
         [Command("play")]
         [Aliases("p", "🧑‍🎤")]
         public async Task PlayMusic(CommandContext ctx, [RemainingText] string query)
         {
+            CommandContext? musicchannel = ctx;
             if (!await PreCom(ctx)) return;
             if (conn!.Channel.Id != userVC!.Id)
             {
