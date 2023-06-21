@@ -21,6 +21,7 @@ namespace DonkBot.utils
         protected DiscordChannel? userVC;
         protected DSharpPlus.Lavalink.LavalinkTrack? playin;
         public static int repeat;
+        protected static CommandContext? musicchannel;
         
         public async Task<bool> PreCom(CommandContext ctx)
         {
@@ -77,12 +78,12 @@ namespace DonkBot.utils
 
         public async Task OnPlaybackFinished(LavalinkGuildConnection sender, TrackFinishEventArgs e)
         {
-            if (MusicCommand.musicchannel == null)
+            if (musicchannel == null)
             {
                 Console.WriteLine("no ctx for playback finnished");
                 return;
             }
-            CommandContext ctx = MusicCommand.musicchannel;
+            CommandContext ctx = musicchannel;
             if (repeat > 0)
             {
                 await e.Player.PlayAsync(playin!);
