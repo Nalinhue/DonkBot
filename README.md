@@ -1,12 +1,11 @@
 # DonkBot The DiscordBot
 DonkBot is a music bot written in C# using the [DSharpPlus](https://github.com/DSharpPlus/DSharpPlus) library.
 Playing music from youtube using [LavaLink](https://github.com/lavalink-devs/Lavalink) based on the title of the last song played, utilizing
-[YoutubeAPIV3](https://console.cloud.google.com/apis/library/youtube.googleapis.com).
+Youtube Music radio playlist.
 
 ## Prerequisites
 [DiscordBot](https://discord.com/developers/applications)  
-[LavaLinkServers](https://lavalink.darrennathanael.com/) (either public or self-hosted using the [LavaLinkImage](https://github.com/lavalink-devs/Lavalink))  
-[YoutubeAPIV3](https://console.cloud.google.com/apis/library/youtube.googleapis.com) - Sign in, create a project, get a key, enable YouTube Data API v3  
+[LavaLinkServers](https://lavalink.darrennathanael.com/) (either public or self-hosted using the [LavaLinkImage](https://github.com/lavalink-devs/Lavalink))
 [Docker](https://www.docker.com/) installed
 
 ## Installation
@@ -31,11 +30,6 @@ Playing music from youtube using [LavaLink](https://github.com/lavalink-devs/Lav
 
 ## Fluff
 Very open to questions, input, complaints and contributions
-
-### CringLists
-A way to blacklist based off title([cringelist.txt](https://github.com/Nalinhue/DonkBot/blob/main/CringeLists/cringelist.txt)) or by 
-Channel([cringepeoplelist](https://github.com/Nalinhue/DonkBot/blob/main/CringeLists/cringepeoplelist.txt)) edit to your liking but renember it blacklists all that contain the phrase
-and it filters the requests youtubeapi gathers so if you black list everything it wont find anything. I've just put in what youtube frequently recommends.
 
 ### Contact
 Nalinhue@gmail.com

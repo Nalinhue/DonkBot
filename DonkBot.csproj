@@ -6,13 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  
-  <ItemGroup>
-      <None Include="CringeLists\**">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </None>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DSharpPlus" Version="5.0.0" />
@@ -20,7 +13,6 @@
     <PackageReference Include="DSharpPlus.Interactivity" Version="5.0.0" />
     <PackageReference Include="DSharpPlus.SlashCommands" Version="5.0.0" />
     <PackageReference Include="DSharpPlus.Lavalink" Version="5.0.0" />
-    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.60.0.3064" />
   </ItemGroup>
 
 </Project>

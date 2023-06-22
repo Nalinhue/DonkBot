@@ -1,14 +1,9 @@
 using System.Web;
-using System.Xml;
-using DonkBot.Commands;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using DSharpPlus.Lavalink;
 using DSharpPlus.Lavalink.EventArgs;
-using Google.Apis.Services;
-using Google.Apis.YouTube.v3;
-using Google.Apis.YouTube.v3.Data;
 
 namespace DonkBot.utils
 {
@@ -118,26 +113,21 @@ namespace DonkBot.utils
                 await ctx.Channel.SendMessageAsync(embed: nextPlayingEmbed);
                 return;
             }
-            else if (SongRecommender.apiKeys == null)
-                return;
-            else
+            else 
             {
-                var recomd = await SongRecommender.Recommendation(playin!.Uri);
-                if (recomd == "error")
+                if (Yotube.uniqueVideoIds.Count == 0 || Yotube.uniqueVideoIds == null)
                 {
-                    await ctx.Channel.SendMessageAsync("Error you probably ran out of tokens");
-                    return;
+                    string videoid = HttpUtility.ParseQueryString(playin!.Uri.Query).Get("v")!;
+                    await Yotube.yotube(videoid);
                 }
-                if (recomd == "notFound")
-                {
-                    await ctx.Channel.SendMessageAsync("Nothing found :(");
-                    return;
-                }
-                string youtubeUrl = $"https://www.youtube.com/watch?v={recomd}";
+                string youtubeUrl = $"https://www.youtube.com/watch?v={Yotube.uniqueVideoIds![0]}";
+                Yotube.spentvideoids.Add(Yotube.uniqueVideoIds![0]);
+                Yotube.uniqueVideoIds!.RemoveAt(0);
                 var node = ctx.Client.GetLavalink().ConnectedNodes.Values.First();
                 var loadResult = await GetLoadResult(youtubeUrl, node);
                 var track = loadResult.Tracks.First();
                 await Pusic(ctx, track);
+                return;
             }
             sender.PlaybackFinished -= OnPlaybackFinished;
             sender.PlaybackFinished += OnPlaybackFinished;
@@ -184,82 +174,6 @@ namespace DonkBot.utils
                 searchQuery = await node.Rest.GetTracksAsync(query);
 
             return searchQuery;
-        }
-    }
-
-    public class SongRecommender
-    {
-        private static List<string> RecommendedVideoIds = new List<string>();
-        private static int keyIndex = 0;
-        public static string[] apiKeys = Environment.GetEnvironmentVariable("YoutubeAPI")?.Split(',') ?? new string[0];
-        public static async Task<string> Recommendation(Uri trackUri)
-        {
-            try
-            {
-                var youtubeService = new YouTubeService(new BaseClientService.Initializer()
-                {
-                    ApiKey = apiKeys[keyIndex],
-                });
-                keyIndex = (keyIndex + 1) % apiKeys.Length;
-                var videoId = HttpUtility.ParseQueryString(trackUri.Query).Get("v");
-                if (videoId == null)
-                    return "notFound"; 
-                var relatedVideosResponse = await GetRelatedVideos(youtubeService, videoId);
-                var cringelist = new List<string>(File.ReadAllLines("CringeLists/cringelist.txt"));
-                var cringepeoplelist = new List<string>(File.ReadAllLines("CringeLists/cringepeoplelist.txt"));
-                List<SearchResult> eligibleVideos = new List<SearchResult>();
-                foreach (var video in relatedVideosResponse.Items)
-                {
-                    if (await IsVideoRecommended(video, youtubeService, cringelist, cringepeoplelist))
-                    {
-                        eligibleVideos.Add(video);
-                    }
-                }
-                if (eligibleVideos.Count == 0)
-                {
-                    return "notFound";
-                }
-                var rand = new Random();
-                var selectedVideo = eligibleVideos[rand.Next(eligibleVideos.Count)];
-                lock (RecommendedVideoIds)
-                {
-                    RecommendedVideoIds.Add(selectedVideo.Id.VideoId);
-                }
-                return selectedVideo.Id.VideoId;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error: {ex.Message}");
-                return "error";
-            }
-        }
-
-        private static async Task<SearchListResponse> GetRelatedVideos(YouTubeService youtubeService, string videoId)
-        {
-            var relatedVideosRequest = youtubeService.Search.List("snippet");
-            relatedVideosRequest.RelatedToVideoId = videoId;
-            relatedVideosRequest.Type = "video";
-            relatedVideosRequest.VideoCategoryId = "10"; // Music category
-            relatedVideosRequest.MaxResults = 8;
-            relatedVideosRequest.QuotaUser = Guid.NewGuid().ToString();
-            return await relatedVideosRequest.ExecuteAsync();
-        }
-
-        private static async Task<bool> IsVideoRecommended(SearchResult video, YouTubeService youtubeService, List<string> cringelist, List<string> cringepeoplelist)
-        {
-            var videoRequest = youtubeService.Videos.List("contentDetails");
-            videoRequest.Id = video.Id.VideoId;
-            videoRequest.QuotaUser = Guid.NewGuid().ToString();
-            var videoResponse = await videoRequest.ExecuteAsync();
-            var duration = XmlConvert.ToTimeSpan(videoResponse.Items[0].ContentDetails.Duration);
-            var totalMinutes = duration.TotalMinutes;
-            var cringe = !cringelist.Any(title => video.Snippet.Title.Contains(title, StringComparison.OrdinalIgnoreCase));
-            var cringepeople = !cringepeoplelist.Any(chanel => video.Snippet.ChannelTitle.Contains(chanel, StringComparison.OrdinalIgnoreCase));
-
-            lock (RecommendedVideoIds)
-            {
-                return totalMinutes > 2 && totalMinutes < 6 && !RecommendedVideoIds.Contains(video.Id.VideoId) && cringe && cringepeople;
-            }
         }
     }
 }

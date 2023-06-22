@@ -27,6 +27,7 @@ namespace DonkBot.Commands
                 await ctx.Channel.SendMessageAsync($"Failed to find music with query: {query}");
                 return;
             }
+            Yotube.uniqueVideoIds.Clear();
             if (searchQuery.LoadResultType == LavalinkLoadResultType.TrackLoaded || searchQuery.LoadResultType == LavalinkLoadResultType.SearchResult)
             {
                 await Pusic(ctx, searchQuery.Tracks.First());
@@ -159,6 +160,56 @@ namespace DonkBot.Commands
                 repeat = result;
             }
             await ctx.Channel.SendMessageAsync($"Repeating {playin} {repeat} times.");
+        }
+
+        [Command("AQ")]
+        public async Task AQ(CommandContext ctx)
+        {
+            if (Yotube.uniqueVideoIds.Count() != 0 || Yotube.uniqueVideoIds != null)
+            {
+                int i = 1;
+                string queuelist = "";
+                foreach (string song in Yotube.uniqueVideoIds!)
+                {
+                    queuelist += $"{i++}. https://www.youtube.com/watch?v={song}\n";
+                }
+                var queueEmbed = new DiscordEmbedBuilder()
+                {
+                    Color = DiscordColor.PhthaloBlue,
+                    Title = "AQueue",
+                    Description = queuelist
+                };
+                await ctx.Channel.SendMessageAsync(embed: queueEmbed);
+            }
+            else
+            {
+                await ctx.Channel.SendMessageAsync("No queue");
+            }
+        }
+
+        [Command("DQ")]
+        public async Task DQ(CommandContext ctx)
+        {
+            if (Yotube.spentvideoids.Count() != 0 || Yotube.spentvideoids != null)
+            {
+                int i = 1;
+                string queuelist = "";
+                foreach (string song in Yotube.spentvideoids!)
+                {
+                    queuelist += $"{i++}. https://www.youtube.com/watch?v={song}\n";
+                }
+                var queueEmbed = new DiscordEmbedBuilder()
+                {
+                    Color = DiscordColor.PhthaloBlue,
+                    Title = "UnQueue",
+                    Description = queuelist
+                };
+                await ctx.Channel.SendMessageAsync(embed: queueEmbed);
+            }
+            else
+            {
+                await ctx.Channel.SendMessageAsync("No queue");
+            }
         }
     }
 }

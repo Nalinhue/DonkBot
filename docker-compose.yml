@@ -16,11 +16,3 @@ services:
       LavaLink_Port:  "YOUR_LAVALINK_PORT"
       LavaLink_Password: "YOUR_LAVALINK_PASSWORD"
       LavaLink_SSL: "Change_me" # set to True if you have added ssl to your lavalink remove if false
-
-      YoutubeAPI: |
-        YOUR_YOUTUBEAPI_1,
-        YOUR_YOUTUBEAPI_2,
-        YOUR_YOUTUBEAPI_3
-      # if you include a youtubeapi it will autoplay after a song finishes
-      # youtube api has a token limit so if you reach it add as many as you need 
-      # 2 should be plenty since the quota resets daily
