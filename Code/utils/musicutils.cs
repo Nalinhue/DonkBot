@@ -121,7 +121,6 @@ namespace DonkBot.utils
                     await Yotube.yotube(videoid);
                 }
                 string youtubeUrl = $"https://www.youtube.com/watch?v={Yotube.uniqueVideoIds![0]}";
-                Yotube.spentvideoids.Add(Yotube.uniqueVideoIds![0]);
                 Yotube.uniqueVideoIds!.RemoveAt(0);
                 var node = ctx.Client.GetLavalink().ConnectedNodes.Values.First();
                 var loadResult = await GetLoadResult(youtubeUrl, node);

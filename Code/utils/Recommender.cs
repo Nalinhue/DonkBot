@@ -5,10 +5,7 @@ using Newtonsoft.Json.Linq;
 
 public class Yotube
 {
-    public static List<string> uniqueVideoIds = new List<string>();
-    protected static int index = 0;
-    public static List<string> spentvideoids = new List<string>();
-    
+    public static List<string> uniqueVideoIds = new List<string>();    
 
     public static async Task yotube(string videoid)
     {
@@ -35,6 +32,7 @@ public class Yotube
                 }
             }
         }
+        uniqueVideoIds.shuffle();
     }
 
     public static void CreateJson(string videoid)
@@ -42,25 +40,9 @@ public class Yotube
         var externalIpTask = GetExternalIpAddress();
         GetExternalIpAddress().Wait();
         string ipAddress = externalIpTask.Result!.ToString() ?? IPAddress.Loopback.ToString();
-        List<VideoInteraction> videoInteractions = new List<VideoInteraction>();
-        foreach (string spentvideoid in spentvideoids)
-        {
-            VideoInteraction newVideoInteraction = new VideoInteraction
-            {
-                queueImpress = new QueueImpress(),
-                videoId = spentvideoid,
-                queueIndex = index
-            };
-            index++;
-            videoInteractions.Add(newVideoInteraction);
-        }
         Root root = new Root
         {
             playlistId = $"RDAMVM{videoid}",
-            responsiveSignals = new ResponsiveSignals
-            {
-                videoInteraction = videoInteractions
-            },
             context = new Context
             {
                 client = new Client
@@ -85,22 +67,6 @@ public class Yotube
     }
 }
 
-public class QueueImpress
-{
-}
-
-public class VideoInteraction
-{
-    public QueueImpress? queueImpress { get; set; }
-    public string? videoId { get; set; }
-    public int? queueIndex { get; set; }
-}
-
-public class ResponsiveSignals
-{
-    public List<VideoInteraction>? videoInteraction { get; set; }
-}
-
 public class Client
 {
     public string? remoteHost { get; set; }
@@ -117,6 +83,5 @@ public class Context
 public class Root
 {
     public string? playlistId { get; set; }
-    public ResponsiveSignals? responsiveSignals { get; set; }
     public Context? context { get; set; }
 }

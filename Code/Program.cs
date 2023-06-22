@@ -199,7 +199,6 @@ namespace DonkBot
                 return;
             if (conn.Channel.Users.Count() == 1 && conn.Channel.Users.First() == sender.CurrentUser)
             {
-                Yotube.spentvideoids.Clear();
                 await conn.DisconnectAsync();
             }
         }

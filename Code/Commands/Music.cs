@@ -186,30 +186,5 @@ namespace DonkBot.Commands
                 await ctx.Channel.SendMessageAsync("No queue");
             }
         }
-
-        [Command("DQ")]
-        public async Task DQ(CommandContext ctx)
-        {
-            if (Yotube.spentvideoids.Count() != 0 || Yotube.spentvideoids != null)
-            {
-                int i = 1;
-                string queuelist = "";
-                foreach (string song in Yotube.spentvideoids!)
-                {
-                    queuelist += $"{i++}. https://www.youtube.com/watch?v={song}\n";
-                }
-                var queueEmbed = new DiscordEmbedBuilder()
-                {
-                    Color = DiscordColor.PhthaloBlue,
-                    Title = "UnQueue",
-                    Description = queuelist
-                };
-                await ctx.Channel.SendMessageAsync(embed: queueEmbed);
-            }
-            else
-            {
-                await ctx.Channel.SendMessageAsync("No queue");
-            }
-        }
     }
 }
