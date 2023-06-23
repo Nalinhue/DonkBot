@@ -92,8 +92,8 @@ namespace DonkBot.Commands
             }
             conn.PlaybackFinished -= OnPlaybackFinished;
             Queues[ctx.Guild.Id].Clear();
-            await conn.StopAsync();
-            
+            Yotube.uniqueVideoIds.Clear();
+            await conn.StopAsync();            
 
             var stopEmbed = new DiscordEmbedBuilder()
             {
