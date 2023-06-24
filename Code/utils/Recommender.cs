@@ -29,12 +29,17 @@ public class Yotube
         {
             while (jsonReader.Read())
             {
-                if (jsonReader.TokenType == JsonToken.PropertyName && (string)jsonReader.Value! == "videoId")
+                if (jsonReader.Value == null)
+                {
+                    Console.WriteLine("youtube done the fucky wuky");
+                    return;
+                }
+                if (jsonReader.TokenType == JsonToken.PropertyName && (string)jsonReader.Value == "videoId")
                 {
                     var vidid = jsonReader.Read();
-                    if (!uniqueVideoIds.Contains((string)jsonReader.Value!))
+                    if (!uniqueVideoIds.Contains((string)jsonReader.Value))
                     {
-                        uniqueVideoIds.Add((string)jsonReader.Value!);
+                        uniqueVideoIds.Add((string)jsonReader.Value);
                     }
                 }
             }
@@ -69,7 +74,12 @@ public class Yotube
     {
         var externalIpTask = GetExternalIpAddress();
         GetExternalIpAddress().Wait();
-        string ipAddress = externalIpTask.Result!.ToString() ?? IPAddress.Loopback.ToString();
+        if (externalIpTask.Result == null)
+        {
+            Console.WriteLine("something went wrong with get ip");
+            return;
+        }
+        string ipAddress = externalIpTask.Result.ToString() ?? IPAddress.Loopback.ToString();
         Root root = new Root
         {
             playlistId = $"RDAMVM{videoid}",

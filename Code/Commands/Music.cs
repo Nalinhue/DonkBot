@@ -3,6 +3,7 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSharpPlus.Lavalink;
 using DonkBot.utils;
+using DonkBot.Code.utils;
 
 namespace DonkBot.Commands
 {
@@ -40,8 +41,7 @@ namespace DonkBot.Commands
                 }
                 await ctx.Channel.SendMessageAsync("Queued playlist");
             }
-            conn.PlaybackFinished -= OnPlaybackFinished;
-            conn.PlaybackFinished += OnPlaybackFinished;
+            conn.PlaybackFinished += EventHandlerer.OnPlaybackFinished;
         }    
     
         [Command("skip")]
@@ -90,7 +90,7 @@ namespace DonkBot.Commands
                 await ctx.Channel.SendMessageAsync("Stop what fool.");
                 return;
             }
-            conn.PlaybackFinished -= OnPlaybackFinished;
+            conn.PlaybackFinished -= EventHandlerer.OnPlaybackFinished;
             Queues[ctx.Guild.Id].Clear();
             Yotube.uniqueVideoIds.Clear();
             await conn.StopAsync();            
