@@ -3,7 +3,7 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSharpPlus.Lavalink;
 using DonkBot.utils;
-using DonkBot.Code.utils;
+using System.Web;
 
 namespace DonkBot.Commands
 {
@@ -28,6 +28,7 @@ namespace DonkBot.Commands
                 await ctx.Channel.SendMessageAsync($"Failed to find music with query: {query}");
                 return;
             }
+            stopthemusic = false;
             Yotube.uniqueVideoIds.Clear();
             if (searchQuery.LoadResultType == LavalinkLoadResultType.TrackLoaded || searchQuery.LoadResultType == LavalinkLoadResultType.SearchResult)
             {
@@ -41,7 +42,8 @@ namespace DonkBot.Commands
                 }
                 await ctx.Channel.SendMessageAsync("Queued playlist");
             }
-            conn.PlaybackFinished += EventHandlerer.OnPlaybackFinished;
+            string videoid = HttpUtility.ParseQueryString(BaseMusic.playin!.Uri.Query).Get("v")!;
+            await Yotube.yotube(videoid);
         }    
     
         [Command("skip")]
@@ -90,7 +92,7 @@ namespace DonkBot.Commands
                 await ctx.Channel.SendMessageAsync("Stop what fool.");
                 return;
             }
-            conn.PlaybackFinished -= EventHandlerer.OnPlaybackFinished;
+            stopthemusic = true;
             Queues[ctx.Guild.Id].Clear();
             Yotube.uniqueVideoIds.Clear();
             await conn.StopAsync();            

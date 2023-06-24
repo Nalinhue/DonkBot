@@ -75,13 +75,14 @@ namespace DonkBot
                 RestEndpoint = endpoint,
                 SocketEndpoint = endpoint
             };
+            await Client.ConnectAsync();
+            LavalinkNodeConnection lavalink = await Client.UseLavalink().ConnectAsync(lavalinkConfig);
+            lavalink.PlaybackFinished += EventHandlerer.OnPlaybackFinished;
             Client.VoiceStateUpdated += EventHandlerer.OnVoiceStateUpdated;
             Client.MessageCreated += EventHandlerer.emojitime;
             Client.MessageReactionAdded += EventHandlerer.reactions;
             Client.SocketClosed += EventHandlerer.OnSocketClosed;
             Commands.CommandErrored += EventHandlerer.OnCommandError;
-            await Client.ConnectAsync();
-            await Client.UseLavalink().ConnectAsync(lavalinkConfig);
             await Task.Delay(-1);
         }
     }

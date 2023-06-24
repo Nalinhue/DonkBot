@@ -29,17 +29,12 @@ public class Yotube
         {
             while (jsonReader.Read())
             {
-                if (jsonReader.Value == null)
-                {
-                    Console.WriteLine("youtube done the fucky wuky");
-                    return;
-                }
-                if (jsonReader.TokenType == JsonToken.PropertyName && (string)jsonReader.Value == "videoId")
+                if (jsonReader.TokenType == JsonToken.PropertyName && (string)jsonReader.Value! == "videoId")
                 {
                     var vidid = jsonReader.Read();
-                    if (!uniqueVideoIds.Contains((string)jsonReader.Value))
+                    if (!uniqueVideoIds.Contains((string)jsonReader.Value!))
                     {
-                        uniqueVideoIds.Add((string)jsonReader.Value);
+                        uniqueVideoIds.Add((string)jsonReader.Value!);
                     }
                 }
             }

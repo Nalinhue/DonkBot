@@ -21,6 +21,8 @@ namespace DonkBot.Code.utils
                 return;
             }
             CommandContext ctx = BaseMusic.musicchannel;
+            if (BaseMusic.stopthemusic == true)
+                return;
             if (BaseMusic.repeat > 0 && BaseMusic.playin != null)
             {
                 await e.Player.PlayAsync(BaseMusic.playin);
@@ -57,7 +59,7 @@ namespace DonkBot.Code.utils
             }
             else 
             {
-                if (Yotube.uniqueVideoIds == null || Yotube.uniqueVideoIds.Count == 0)
+                if (Yotube.uniqueVideoIds.Count == 1)
                 {
                     if (BaseMusic.playin == null)
                         return;
@@ -69,7 +71,7 @@ namespace DonkBot.Code.utils
                     await ctx.Channel.SendMessageAsync("somehow palpatine returned");
                     return;
                 }
-                string youtubeUrl = $"https://www.youtube.com/watch?v={Yotube.uniqueVideoIds[0]}";
+                string youtubeUrl = $"https://www.youtube.com/watch?v={Yotube.uniqueVideoIds![0]}";
                 Yotube.uniqueVideoIds.RemoveAt(0);
                 var node = ctx.Client.GetLavalink().ConnectedNodes.Values.FirstOrDefault();
                 if (node == null)

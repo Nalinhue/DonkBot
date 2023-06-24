@@ -15,6 +15,7 @@ namespace DonkBot.utils
         public static LavalinkTrack? playin;
         public static int repeat;
         public static CommandContext? musicchannel;
+        public static bool stopthemusic = false;
         
         public async Task<bool> PreCom(CommandContext ctx)
         {
