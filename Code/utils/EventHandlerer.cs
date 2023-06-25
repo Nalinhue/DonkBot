@@ -13,9 +13,9 @@ namespace DonkBot.Code.utils
 {
     public class EventHandlerer
     {
-        public static async Task OnPlaybackFinished(LavalinkGuildConnection sender, TrackFinishEventArgs e)
+        public static async Task OnPlaybackFinished(LavalinkGuildConnection? sender, TrackFinishEventArgs? e)
         {
-            if (BaseMusic.musicchannel == null)
+            if (BaseMusic.musicchannel == null || e == null)
             {
                 Console.WriteLine("no ctx for playback finnished");
                 return;
@@ -227,7 +227,29 @@ namespace DonkBot.Code.utils
                 }
             }
             await s.ConnectAsync();
-            await s.UseLavalink().ConnectAsync(DonkBot.Program.lavalinkConfig!);
+            try
+            {
+                await s.UseLavalink().ConnectAsync(DonkBot.Program.lavalinkConfig!);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine("Exception caught while trying to connect to Lavalink: {0}", ex.Message);
+                Console.WriteLine("Stack Trace: {0}", ex.StackTrace);
+                for (int i = 0; i < 15; i++)
+                {
+                    await Task.Delay(6000);
+                    try
+                    {
+                        await s.ConnectAsync();
+                        await s.UseLavalink().ConnectAsync(DonkBot.Program.lavalinkConfig!);
+                        break;
+                    }
+                    catch (InvalidOperationException retryEx)
+                    {
+                        Console.WriteLine("Exception caught on retry {0}: {1}", i, retryEx.Message);
+                    }
+                }
+            }
         }
     }
 }
