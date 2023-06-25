@@ -5,7 +5,7 @@ Youtube Music radio playlist.
 
 ## Prerequisites
 [DiscordBot](https://discord.com/developers/applications)  
-[LavaLinkServers](https://lavalink.darrennathanael.com/) (either public or self-hosted using the [LavaLinkImage](https://github.com/lavalink-devs/Lavalink))
+[LavaLinkServers](https://lavalink.darrennathanael.com/) (either public or self-hosted using the [LavaLinkImage](https://github.com/lavalink-devs/Lavalink))  
 [Docker](https://www.docker.com/) installed
 
 ## Installation
