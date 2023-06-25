@@ -210,7 +210,6 @@ namespace DonkBot.Code.utils
 
         public static async Task OnSocketClosed(DiscordClient s, SocketCloseEventArgs e)
         {
-            Console.WriteLine("Disconnected! Attempting to reconnect...");
             bool internet = false;
             while (internet == false)
             {
@@ -227,29 +226,6 @@ namespace DonkBot.Code.utils
                 }
             }
             await s.ConnectAsync();
-            try
-            {
-                await s.UseLavalink().ConnectAsync(DonkBot.Program.lavalinkConfig!);
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine("Exception caught while trying to connect to Lavalink: {0}", ex.Message);
-                Console.WriteLine("Stack Trace: {0}", ex.StackTrace);
-                for (int i = 0; i < 15; i++)
-                {
-                    await Task.Delay(6000);
-                    try
-                    {
-                        await s.ConnectAsync();
-                        await s.UseLavalink().ConnectAsync(DonkBot.Program.lavalinkConfig!);
-                        break;
-                    }
-                    catch (InvalidOperationException retryEx)
-                    {
-                        Console.WriteLine("Exception caught on retry {0}: {1}", i, retryEx.Message);
-                    }
-                }
-            }
         }
     }
 }
