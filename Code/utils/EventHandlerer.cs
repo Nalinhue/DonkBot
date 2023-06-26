@@ -13,7 +13,7 @@ namespace DonkBot.Code.utils
 {
     public class EventHandlerer
     {
-        public static async Task OnPlaybackFinished(LavalinkGuildConnection? sender, TrackFinishEventArgs? e)
+        public static async Task OnPlaybackFinished(LavalinkGuildConnection? s, TrackFinishEventArgs? e)
         {
             if (BaseMusic.musicchannel == null || e == null)
             {
@@ -91,9 +91,9 @@ namespace DonkBot.Code.utils
             }
         }
 
-        public static async Task reactions(DiscordClient sender, MessageReactionAddEventArgs e)
+        public static async Task reactions(DiscordClient s, MessageReactionAddEventArgs e)
         {
-            CommandsNextExtension commands = sender.GetCommandsNext();
+            CommandsNextExtension commands = s.GetCommandsNext();
             CommandContext ctx = commands.CreateContext(e.Message, null!, null);
             string? UserID = Environment.GetEnvironmentVariable("UserID");
             if (e.User.IsBot)
@@ -141,9 +141,9 @@ namespace DonkBot.Code.utils
                     break;
             }
         }
-        public static async Task emojitime(DiscordClient sender, MessageCreateEventArgs e)
+        public static async Task emojitime(DiscordClient s, MessageCreateEventArgs e)
         {
-            CommandsNextExtension commands = sender.GetCommandsNext();
+            CommandsNextExtension commands = s.GetCommandsNext();
             CommandContext ctx = commands.CreateContext(e.Message, null!, null);
             if (e.Author.IsBot)
                 return;
@@ -156,7 +156,7 @@ namespace DonkBot.Code.utils
             }
         }
 
-        public static async Task OnCommandError(CommandsNextExtension sender, CommandErrorEventArgs e)
+        public static async Task OnCommandError(CommandsNextExtension s, CommandErrorEventArgs e)
         {
             if (e.Exception is ChecksFailedException)
             {
@@ -177,22 +177,21 @@ namespace DonkBot.Code.utils
                 };
                 await e.Context.Channel.SendMessageAsync(embed: cooldownMessage);
             }
-            if (e.Exception.StackTrace == null)
+            else if (e.Exception is CommandNotFoundException)
             {
-                await e.Context.Channel.SendMessageAsync("god only knows");
-                return;
+                await e.Context.Channel.SendMessageAsync("not a command");
             }
             else 
             {
-                await e.Context.Channel.SendMessageAsync($"Message: {e.Exception.Message}\n\nStackTrace: {e.Exception.StackTrace}\n\nSource: {e.Exception.Source}");
+                await e.Context.Channel.SendMessageAsync("idk dude");
             }
         }
 
-        public static async Task OnVoiceStateUpdated(DiscordClient sender, VoiceStateUpdateEventArgs e)
+        public static async Task OnVoiceStateUpdated(DiscordClient s, VoiceStateUpdateEventArgs e)
         {
-            if (e.User == sender.CurrentUser)
+            if (e.User == s.CurrentUser)
                 return;
-            var lava = sender.GetLavalink();
+            var lava = s.GetLavalink();
             var node = lava.ConnectedNodes.Values.FirstOrDefault();
             if (node == null)
             {
@@ -202,16 +201,18 @@ namespace DonkBot.Code.utils
             var conn = node.GetGuildConnection(e.Guild);
             if (conn == null)
                 return;
-            if (conn.Channel.Users.Count() == 1 && conn.Channel.Users.First() == sender.CurrentUser)
-            {
+            if (conn.Channel.Users.Count() == 1 && conn.Channel.Users.First() == s.CurrentUser)
+            {   
+                BaseMusic.stopthemusic = true;
+                BaseMusic.Queues[conn.Guild.Id].Clear();
+                Yotube.uniqueVideoIds.Clear();
+                await conn.StopAsync();
                 await conn.DisconnectAsync();
             }
         }
 
         public static async Task OnSocketClosed(DiscordClient s, SocketCloseEventArgs e)
         {
-            Console.WriteLine(e.CloseMessage);
-            Console.WriteLine(e.CloseCode);
             bool internet = false;
             while (internet == false)
             {
