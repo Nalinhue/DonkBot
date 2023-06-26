@@ -184,7 +184,7 @@ namespace DonkBot.Code.utils
             }
             else 
             {
-                await e.Context.Channel.SendMessageAsync($"{e.Exception.Message}\n {e.Exception.StackTrace}");
+                await e.Context.Channel.SendMessageAsync($"Message: {e.Exception.Message}\n\nStackTrace: {e.Exception.StackTrace}\n\nSource: {e.Exception.Source}");
             }
         }
 
@@ -210,6 +210,8 @@ namespace DonkBot.Code.utils
 
         public static async Task OnSocketClosed(DiscordClient s, SocketCloseEventArgs e)
         {
+            Console.WriteLine(e.CloseMessage);
+            Console.WriteLine(e.CloseCode);
             bool internet = false;
             while (internet == false)
             {

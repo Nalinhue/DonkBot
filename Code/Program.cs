@@ -29,6 +29,8 @@ namespace DonkBot
                 Token = DiscordToken,
                 TokenType = TokenType.Bot,
                 AutoReconnect = false,
+                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Debug,
+                LogUnknownEvents = false
             };
             Client = new DiscordClient(config);
             Client.UseInteractivity(new InteractivityConfiguration() 
