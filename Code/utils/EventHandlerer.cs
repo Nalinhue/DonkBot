@@ -210,25 +210,5 @@ namespace DonkBot.Code.utils
                 await conn.DisconnectAsync();
             }
         }
-
-        public static async Task OnSocketClosed(DiscordClient s, SocketCloseEventArgs e)
-        {
-            bool internet = false;
-            while (internet == false)
-            {
-                using var client = new HttpClient();
-                var response = await client.GetAsync("http://clients3.google.com/generate_204");
-                if (response.IsSuccessStatusCode == true)
-                {
-                    internet = true;
-                }
-                else
-                {
-                    Console.WriteLine("Internet connection is not available. Retrying in 5 seconds...");
-                    await Task.Delay(5000);
-                }
-            }
-            await s.ConnectAsync();
-        }
     }
 }
