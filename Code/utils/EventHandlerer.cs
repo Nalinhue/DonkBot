@@ -87,6 +87,7 @@ namespace DonkBot.Code.utils
                 }
                 var track = loadResult.Tracks.First();                
                 await BaseMusic.Pusic(ctx, track);
+                Thread.Sleep(20000);
                 return;
             }
         }
