@@ -28,8 +28,8 @@ namespace DonkBot
                 Intents = DiscordIntents.All,
                 Token = DiscordToken,
                 TokenType = TokenType.Bot,
-                AutoReconnect = false,
-                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Information,
+                AutoReconnect = true,
+                MinimumLogLevel = Microsoft.Extensions.Logging.LogLevel.Debug,
                 LogUnknownEvents = false
             };
             Client = new DiscordClient(config);
@@ -83,7 +83,6 @@ namespace DonkBot
             Client.VoiceStateUpdated += EventHandlerer.OnVoiceStateUpdated;
             Client.MessageCreated += EventHandlerer.emojitime;
             Client.MessageReactionAdded += EventHandlerer.reactions;
-            Client.SocketClosed += EventHandlerer.OnSocketClosed;
             Commands.CommandErrored += EventHandlerer.OnCommandError;
             await Task.Delay(-1);
         }
