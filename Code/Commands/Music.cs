@@ -95,7 +95,8 @@ namespace DonkBot.Commands
             stopthemusic = true;
             Queues[ctx.Guild.Id].Clear();
             Yotube.uniqueVideoIds.Clear();
-            await conn.StopAsync();            
+            await conn.StopAsync();       
+            await conn.DisconnectAsync();     
 
             var stopEmbed = new DiscordEmbedBuilder()
             {
